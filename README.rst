@@ -1,69 +1,26 @@
-What's Ryu
-==========
-Ryu is a component-based software defined networking framework.
 
-Ryu provides software components with well defined API that make it
-easy for developers to create new network management and control
-applications. Ryu supports various protocols for managing network
-devices, such as OpenFlow, Netconf, OF-config, etc. About OpenFlow,
-Ryu supports fully 1.0, 1.2, 1.3, 1.4, 1.5 and Nicira Extensions.
-
-All of the code is freely available under the Apache 2.0 license. Ryu
-is fully written in Python.
-
-
-Quick Start
-===========
-Installing Ryu is quite easy::
-
-   % pip install ryu
-
-If you prefer to install Ryu from the source code::
-
-   % git clone git://github.com/osrg/ryu.git
-   % cd ryu; pip install .
-
-If you want to write your Ryu application, have a look at
-`Writing ryu application <http://ryu.readthedocs.io/en/latest/writing_ryu_app.html>`_ document.
-After writing your application, just type::
-
-   % ryu-manager yourapp.py
-
-
-Optional Requirements
+Dang Huy Hoang - ITITIU13025
 =====================
+This repository includes both Ryu source code and the project code.
+The code can be located at Thesis/ryu/gui folder.
 
-Some functionalities of ryu requires extra packages:
+It is recommended to run the controller.py on Pycharm for easy debug. The web GUI server runs on http://127.0.0.1:8000/
+Some dependencies that need to be installed.
 
-- OF-Config requires lxml and ncclient
-- NETCONF requires paramiko
-- BGP speaker (SSH console) requires paramiko
-- Zebra protocol service (database) requires SQLAlchemy
++Ryu (sudo pip install ryu)
++Flask
++gevent
++gevent-websocket 
++python-gevent, python-routes, python-webob, and python-paramiko should be installed.
 
-If you want to use the functionalities, please install requirements::
+Start Ryu from a terminal, there are three network applications to choose from, each application needs to run independently (terminate the ryu-manager (Ctrl-Z) and retype the command after each use).
 
-    % pip install -r tools/optional-requires
-
-Please refer to tools/optional-requires for details.
-
-
-Prerequisites
-=============
-If you got some error messages at installation step, please confirm
-dependencies for building required Python packages.
-
-On Ubuntu(16.04 LTS or later)::
-
-  % apt install gcc python-dev libffi-dev libssl-dev libxml2-dev libxslt1-dev zlib1g-dev
+For simple_switch and topology view: "ryu-manager --verbose --observe-links ryu.app.simple_switch ryu.app.rest_topology  ryu.app.ofctl_rest ryu.topology.switches"
+For rest_firewall: "ryu-manager --verbose --observe-links ryu.app.rest_firewall"
+For rest_router: "ryu-manager --verbose --observe-links ryu.app.rest_router"
 
 
-Support
-=======
-Ryu Official site is `<http://osrg.github.io/ryu/>`_.
+The rest are for GUI
 
-If you have any
-questions, suggestions, and patches, the mailing list is available at
-`ryu-devel ML
-<https://lists.sourceforge.net/lists/listinfo/ryu-devel>`_.
-`The ML archive at Gmane <http://dir.gmane.org/gmane.network.ryu.devel>`_
-is also available.
+Start controller:"./ryu/ryu/gui/controller.py" (or from Pycharm) and connect to "127.0.0.1:8000". There is a authenication dialog: username:bailey password: secret. After that, there will be another
+dialog to connect to the Ryu proxy server (the default is http://127.0.0.1:8080/)
