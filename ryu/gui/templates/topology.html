@@ -1,0 +1,242 @@
+{% extends "base.html" %}
+{% block head %}
+<script type="text/javascript">
+  var ws = new WebSocket("ws://{{ host }}:{{ port }}/websocket");
+  ws.onmessage = function(msg) {
+    websocket.onMessage(msg.data);
+  };
+
+  jsPlumb.ready(function(){
+    topo.setInput({host: "{{ host }}"});
+    topo.registerHandler();
+    topo.init();
+  });
+</script>
+{% endblock%}
+
+{% block body %}
+
+
+<div id="jquery-ui-dialog" title="Connect to controller.">
+  <form>
+  <fieldset>
+    <p>Enter the address of the controller to begin.</p>
+    <p>
+      <label for="jquery-ui-dialog-form-host">host</label>
+      <input type="text" name="jquery-ui-dialog-form-host" id="jquery-ui-dialog-form-host" class="text ui-widget-content ui-corner-all" />
+    </p>
+    <p>
+      <label for="jquery-ui-dialog-form-port">port</label>
+      <input type="text" name="jquery-ui-dialog-form-port" id="jquery-ui-dialog-form-port" class="text ui-widget-content ui-corner-all" />
+    </p>
+    <p id="input-err-msg"></p>
+  </fieldset>
+  </form>
+</div>
+
+<div id="get-firewall-rule-dialog" title="List of firewall rules" style="display:none;">
+  <div class="ui-widget-header content-title">
+    <div id="firewall-content" class="content-title-text"></div>
+  </div>
+  <div id="firewall-rule-body" class="content-body">
+    <table id="firewall-rule-table">
+      <tr class="content-table-title">
+        <th class="rule-id">Rule ID</th>
+        <th class="first-host">1st host</th>
+        <th class="second-host">2nd host</th>
+        <th class="protocol"> Protocol</th>
+        <th class="action"> Action</th>
+        <th class="priority"> Priority</th>
+        <th class="delete">Delete Rule</th>
+      </tr>
+    </table>
+  </div>
+  <div class="content-end"></div>
+</div>
+
+<div id="set-firewall-rule-dialog" title="Set Firewall rule" style="display:none;">
+  <form>
+  <fieldset>
+    <p>Enter the firewall attributes </p>
+    <p>
+      <label for="jquery-ui-dialog-form-1st-host">1st host</label>
+      <input type="text" name="jquery-ui-dialog-form-1st-host" id="jquery-ui-dialog-form-1st-host" class="text ui-widget-content ui-corner-all" />
+    </p>
+    <p>
+      <label for="jquery-ui-dialog-form-2nd-host">2nd host(of the same switch as the 1st host)</label>
+      <input type="text" name="jquery-ui-dialog-form-2nd-host" id="jquery-ui-dialog-form-2nd-host" class="text ui-widget-content ui-corner-all" />
+    </p>
+    <p>
+      <label for="jquery-ui-dialog-form-protocol">Protocol</label>
+      <select name="jquery-ui-dialog-form-protocol" id="jquery-ui-dialog-form-protocol" class="text ui-widget-content ui-corner-all">
+          <option value="any">ANY</option>
+          <option value="ICMP">ICMP</option>
+          <option value="TCP">TCP</option>
+          <option value="UDP">UDP</option>
+      </select>
+    </p>
+    <p>
+      <label for="jquery-ui-dialog-form-action">Action</label>
+      <select name="jquery-ui-dialog-form-action" id="jquery-ui-dialog-form-action" class="text ui-widget-content ui-corner-all">
+          <option value="ALLOW">ALLOW</option>
+          <option value="DENY">DENY</option>
+      </select>
+    </p>
+    <p>
+      <label for="jquery-ui-dialog-form-priority">Priority (min:0, max:100)</label>
+      <input type="number" name="jquery-ui-dialog-form-priority" id="jquery-ui-dialog-form-priority" class="text ui-widget-content ui-corner-all" min="0" max="100"/>
+    </p>
+
+
+    <p id="input-err-msg-1"></p>
+  </fieldset>
+  </form>
+</div>
+
+<div id="get-router-addresses-dialog" title="List of Addresses" style="display:none;">
+  <div class="ui-widget-header content-title">
+    <div id="router-addresses-content" class="content-title-text"></div>
+  </div>
+  <div id="router-addresses-body" class="content-body">
+    <table id="router-addresses-table">
+      <tr class="content-table-title">
+        <th class="address-id">Address ID</th>
+        <th class="address">Address</th>
+        <th class="delete">Delete Address</th>
+      </tr>
+    </table>
+  </div>
+  <div class="content-end"></div>
+</div>
+
+<div id="get-router-routes-dialog" title="List of Routes" style="display:none;">
+  <div class="ui-widget-header content-title">
+    <div id="router-routes-content" class="content-title-text"></div>
+  </div>
+  <div id="router-routes-body" class="content-body">
+    <table id="router-routes-table">
+      <tr class="content-table-title">
+        <th class="route-id">Route ID</th>
+        <th class="destination">Destination</th>
+        <th class="gateway">Gateway</th>
+        <th class="delete">Delete Route</th>
+      </tr>
+    </table>
+  </div>
+  <div class="content-end"></div>
+</div>
+
+<div id="set-router-address-dialog" title="Set Router's Address" style="display:none;">
+  <form>
+  <fieldset>
+    <p>Set an IP address for router</p>
+    <p>
+      <label for="jquery-ui-dialog-form-router-address">IP address</label>
+      <input type="text" name="jquery-ui-dialog-form-router-address" id="jquery-ui-dialog-form-router-address" class="text ui-widget-content ui-corner-all" />
+    </p>
+    <p id="input-err-msg-router-address-set"></p>
+  </fieldset>
+  </form>
+</div>
+
+<div id="set-router-static-routes-dialog" title="Set Router's Static Route" style="display:none;">
+  <form>
+  <fieldset>
+    <p>Set a static route for router</p>
+    <p>
+      <label for="jquery-ui-dialog-form-destination">Destination</label>
+      <input type="text" name="jquery-ui-dialog-form-destination" id="jquery-ui-dialog-form-destination" class="text ui-widget-content ui-corner-all" />
+    </p>
+    <p>
+      <label for="jquery-ui-dialog-form-static-gateway">Gateway</label>
+      <input type="text" name="jquery-ui-dialog-form-static-gateway" id="jquery-ui-dialog-form-static-gateway" class="text ui-widget-content ui-corner-all" />
+    </p>
+  </fieldset>
+  </form>
+</div>
+
+<div id="set-router-default-route-dialog" title="Set Router's Default Route" style="display:none;">
+  <form>
+  <fieldset>
+    <p>Set a default route for router</p>
+    <p>
+      <label for="jquery-ui-dialog-form-default-gateway">Gateway</label>
+      <input type="text" name="jquery-ui-dialog-form-default-gateway" id="jquery-ui-dialog-form-default-gateway" class="text ui-widget-content ui-corner-all" />
+    </p>
+  </fieldset>
+  </form>
+</div>
+
+<div id="link-list" class="ui-widget-content content">
+  <div class="ui-widget-header content-title">
+    <div class="content-title-text">Link status</div>
+    <div class="content-title-close ui-icon ui-icon-closethick">close</div>
+  </div>
+  <div id="link-list-body" class="content-body">
+    <table id="link-list-table">
+      <tr class="content-table-title">
+        <th class="port-no">no</th>
+        <th class="port-name">name</th>
+        <th class="port-peer">peer</th>
+      </tr>
+    </table>
+  </div>
+  <div class="content-end"></div>
+</div>
+
+<div id="flow-list" class="ui-widget-content content">
+  <div class="ui-widget-header content-title">
+    <div class="content-title-text">Flow entries</div>
+    <div class="content-title-close ui-icon ui-icon-closethick">close</div>
+  </div>
+  <div id="flow-list-body" class="content-body">
+    <table id="flow-list-table">
+    </table>
+  </div>
+  <div class="end-of-content" class="content-end"></div>
+</div>
+
+<div id="firewall-list" class="ui-widget-content content">
+  <div class="ui-widget-header content-title">
+    <div class="content-title-text">Firewall Status</div>
+    <div class="content-title-close ui-icon ui-icon-closethick">close</div>
+  </div>
+  <div id="firewall-stats-body" class="content-body">
+    <table id="firewall-table">
+    </table>
+  </div>
+  <div class="end-of-content" class="content-end"></div>
+</div>
+
+<div id="router-list" class="ui-widget-content content">
+  <div class="ui-widget-header content-title">
+    <div class="content-title-text">Router Status</div>
+    <div class="content-title-close ui-icon ui-icon-closethick">close</div>
+  </div>
+  <div id="router-stats-body" class="content-body">
+    <table id="router-table">
+    </table>
+  </div>
+  <div class="end-of-content" class="content-end"></div>
+</div>
+
+<div id="topology" class="ui-widget-content content">
+  <div class="ui-widget-header content-title">Topology</div>
+  <div class="content-body">
+    <div class="rest-status">Unconnected</div>
+  </div>
+</div>
+
+<div id="menu" class="ui-widget-content content">
+  <div class="ui-widget-header content-title">Menu</div>
+  <div id="menu-body" class="content-body">
+    <a href="javascript:void(0);"><div id="jquery-ui-dialog-opener" class="menu-item">Connect to controller</div></a>
+    <a href="javascript:void(0);"><div id="menu-redesign" class="menu-item">Refresh Topology</div></a>
+    <a href="javascript:void(0);"><div id="menu-link-status" class="menu-item">Link status</div></a>
+    <a href="javascript:void(0)"><div id="menu-flow-entries" class="menu-item">Flow entries</div></a>
+    <a href="javascript:void(0)" onclick="topo.showFirewall()"><div id="menu-firewall-status" class="menu-item">Firewall status</div></a>
+    <a href="javascript:void(0)" onclick="topo.showRouter()"><div id="router-status" class="menu-item">Router status</div></a>
+  </div>
+  <div class="content-end"></div>
+</div>
+{% endblock %}
